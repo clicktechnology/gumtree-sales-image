@@ -1,0 +1,72 @@
+name: Build and deploy Lambda function image
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  LAMBDA_VER: 0.8.5
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  build:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code from the Git repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{secrets.AWS_ACCOUNT_ID}}:role/GithubActionsECRRole
+          aws-region: ${{ vars.REGION }}
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: true
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG: ${{ env.LAMBDA_VER }}
+        run: |
+          docker build --platform linux/amd64 -t ${{vars.REPO}}:${TAG} .
+          docker tag ${{vars.REPO}}:${TAG} ${REGISTRY}/${{vars.REPO}}:${TAG}
+          docker push ${REGISTRY}/${{vars.REPO}}:${TAG}
+
+      - name: Update latest image on Amazon ECR with 'latest' tag
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG: ${{ env.LAMBDA_VER }}
+        run: |
+          MANIFEST=$(aws ecr batch-get-image --repository-name ${{vars.REPO}} \
+          --image-ids imageTag=${TAG} \
+          --query 'images[].imageManifest' \
+          --output text)
+          aws ecr put-image --repository-name ${{vars.REPO}} --image-tag latest --image-manifest "$MANIFEST"
+
+      - name: Deploy Lambda function
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ vars.REGION }}
+          function_name: ${{vars.LAMBDA_NAME}}
+          image_uri: ${{ steps.login-ecr.outputs.registry }}/${{vars.REPO}}:${{env.LAMBDA_VER}}
+          timeout: 30
+          memory_size: 128
+          publish: true
+          role: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/AWSLambdaBasicExecutionRole-${{vars.LAMBDA_NAME}}
+          environment:
+            CLOUDFRONT_DISTRIBUTION=${{vars.CLOUDFRONT_DISTRIBUTION}},
+            RRD_FILE=items.rrd,
+            CSV_FILE=sales-count.csv,
+            GUMTREE_URL=https://www.gumtree.com/search?featured_filter=false&q=&search_location=Broadstone%2C+Dorset&search_category=for-sale&distance=1&urgent_filter=false&sort=date&search_distance=1&search_scope=false&photos_filter=false,
+            S3_BUCKET=${{vars.S3_BUCKET}}
