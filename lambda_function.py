@@ -91,9 +91,9 @@ def handler(event, context):
                           '--height', '600',
                           '--full-size-mode',
                           '--watermark=cloudguyinbroadstone.com',
-                          '--title', 'Gumtree items for sale in 1 mile radius from Cloud Guy in Broadstone\\nCount in units per ' + period,
+                          '--title', 'Gumtree items for sale in 1 mile radius from Cloud Guy in Broadstone\nCount in units per ' + period,
                           f"DEF:salecount=/tmp/{rrd_file}:sale-count:AVERAGE",
-                          f"LINE3:salecount#FF0000:Sale Count",
+                          f"LINE2:salecount#FF0000:Sale Count\\n",
                           f"GPRINT:salecount:MIN: Min%6.0lf\\n",
                           f"GPRINT:salecount:MAX: Max%6.0lf\\n",
                           f"GPRINT:salecount:AVERAGE: Average%6.0lf"
