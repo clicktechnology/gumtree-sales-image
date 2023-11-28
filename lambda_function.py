@@ -90,9 +90,14 @@ def handler(event, context):
                           '--width', '800',
                           '--height', '600',
                           '--full-size-mode',
-                          '--title', 'Count of Gumtree items for sale in 1 mile radius from Cloud Guy in Broadstone',
+                          '--watermark=cloudguyinbroadstone.com',
+                          '--title', 'Gumtree items for sale in 1 mile radius from Cloud Guy in Broadstone\\nCount in units per ' + period,
                           f"DEF:salecount=/tmp/{rrd_file}:sale-count:AVERAGE",
-                          f"LINE1:salecount#FF0000:Sale Count")
+                          f"LINE3:salecount#FF0000:Sale Count",
+                          f"GPRINT:salecount:MIN: Min%6.0lf\\n",
+                          f"GPRINT:salecount:MAX: Max%6.0lf\\n",
+                          f"GPRINT:salecount:AVERAGE: Average%6.0lf"
+                          )
 
             print(f"Generated {period} graph: /tmp/{graph_file}")
 
