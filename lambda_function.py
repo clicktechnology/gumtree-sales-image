@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 rrd_file = os.environ['RRD_FILE']
 csv_file = os.environ['CSV_FILE']
 distribution = os.environ['CLOUDFRONT_DISTRIBUTION']
+refresh_distribution = os.environ['REFRESH_DISTRIBUTION']
 url = os.environ['GUMTREE_URL']
 s3bucket = os.environ['S3_BUCKET']
 
@@ -105,30 +106,34 @@ def handler(event, context):
         move_files('upload', [rrd_file, csv_file, 'hour_graph.png', 'day_graph.png', 'week_graph.png', 'month_graph.png', 'year_graph.png'])
 
         # invalidate CloudFront cache
-        cloudfront = boto3.client('cloudfront')
-        result = cloudfront.create_invalidation(
-            DistributionId=distribution,
-            InvalidationBatch={
-                'Paths': {
-                    'Quantity': 5,
-                    'Items': [
-                        '/images/day_graph.png',
-                        '/images/hour_graph.png',
-                        '/images/month_graph.png',
-                        '/images/week_graph.png',
-                        '/images/year_graph.png'
-                    ]},
-                'CallerReference': str(time.time()).replace(".", "")
-            }
-        )
-        invalidation_id = result['Invalidation']['Id']
-        print(f"Invalidated graph images on CloudFront. Invalidation ID: {invalidation_id}")
+        if refresh_distribution == 'true':
+            print("Invalidating CloudFront cache")
+            cloudfront = boto3.client('cloudfront')
+            result = cloudfront.create_invalidation(
+                DistributionId=distribution,
+                InvalidationBatch={
+                    'Paths': {
+                        'Quantity': 5,
+                        'Items': [
+                            '/images/year_graph.png',
+                            '/images/hour_graph.png',
+                            '/images/day_graph.png',
+                            '/images/month_graph.png',
+                            '/images/week_graph.png'
+                        ]},
+                    'CallerReference': str(time.time()).replace(".", "")
+                }
+            )
+            invalidation_id = result['Invalidation']['Id']
+            message = (f"Invalidated CloudFront cache. Invalidation ID: {invalidation_id}")
+
+        elif refresh_distribution == 'false':
+            message = (f"Skipping CloudFront cache invalidation. Repo variable REFRESH_DISTRIBUTION is set to " + refresh_distribution)
 
         # return successful lambda response
         return {
             'statusCode': 200,
-            'body': 'Successfully updated RRD file, generated graphs and invalidated CloudFront cache. Invalidation '
-                    'ID: ' + invalidation_id
+            'body': 'Successfully updated RRD file, generated graphs. ' + message
         }
     else:
         item_count = 0
