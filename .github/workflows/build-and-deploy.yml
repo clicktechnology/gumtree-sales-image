@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  LAMBDA_VER: 0.8.5
+  LAMBDA_VER: 0.8.6
 
 permissions:
   id-token: write # This is required for requesting the JWT
