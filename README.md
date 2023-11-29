@@ -11,6 +11,10 @@ Developing Lambda functions in the console is fine for "Hello world!" type demon
 
 The project I did here was to simply count the number of items for sale on gumtree.com within a one mile radius of where I live in Broadstone, Dorset, and then produce hourly, daily, weekly, monthly and yearly graphs using rrdtool.
 
+## Build status
+
+[![Build and deploy Lambda function image](https://github.com/clicktechnology/gumtree-sales-image/actions/workflows/build-and-deploy.yml/badge.svg)](https://github.com/clicktechnology/gumtree-sales-image/actions/workflows/build-and-deploy.yml)
+
 ## Why do this?
 
 I wanted to see if it's possible to see any trends in the data. For example, are there more items for sale on a Sunday than a Monday? Are there any economic trends? More people moving house? More people buying/selling? Could, for example, number of freebie sofas for sale be indicative of people moving out of the area? If so, what's the baseline, and so on?
