@@ -125,7 +125,7 @@ def handler(event, context):
                 }
             )
             invalidation_id = result['Invalidation']['Id']
-            message = (f"Invalidated CloudFront cache. Invalidation ID: {invalidation_id}")
+            message = f"Invalidated CloudFront cache. Invalidation ID: {invalidation_id}"
 
         elif refresh_distribution == 'false':
             message = (f"Skipping CloudFront cache invalidation. Repo variable REFRESH_DISTRIBUTION is set to " + refresh_distribution)

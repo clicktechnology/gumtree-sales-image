@@ -69,4 +69,5 @@ jobs:
             RRD_FILE=items.rrd,
             CSV_FILE=sales-count.csv,
             GUMTREE_URL=https://www.gumtree.com/search?featured_filter=false&q=&search_location=Broadstone%2C+Dorset&search_category=for-sale&distance=1&urgent_filter=false&sort=date&search_distance=1&search_scope=false&photos_filter=false,
-            S3_BUCKET=${{vars.S3_BUCKET}}
+            S3_BUCKET=${{vars.S3_BUCKET}},
+            REFRESH_DISTRIBUTION=${{vars.REFRESH_DISTRIBUTION}},
