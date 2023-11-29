@@ -130,6 +130,9 @@ def handler(event, context):
         elif refresh_distribution == 'false':
             message = (f"Skipping CloudFront cache invalidation. Repo variable REFRESH_DISTRIBUTION is set to " + refresh_distribution)
 
+        # log cache invalidation message
+        print(message)
+
         # return successful lambda response
         return {
             'statusCode': 200,
