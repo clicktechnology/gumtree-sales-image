@@ -48,7 +48,7 @@ Set the variables
 
 ```bash
 LAMBDA_NAME='gumtree-sales'
-LAMBDA_VER='0.8.4'
+LAMBDA_VER='1.0.0'
 LAMBDA_LOCAL_PORT=19000
 REGION='eu-west-2'
 ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)

@@ -12,6 +12,7 @@ distribution = os.environ['CLOUDFRONT_DISTRIBUTION']
 refresh_distribution = os.environ['REFRESH_DISTRIBUTION']
 url = os.environ['GUMTREE_URL']
 s3bucket = os.environ['S3_BUCKET']
+version = os.environ['VERSION']
 
 # define time periods for graphs
 periods = {
@@ -67,6 +68,7 @@ def update_csv(csvfile, itemcount):
 # main lambda handler code
 def handler(event, context):
     """Main Lambda function handler"""
+    print('Starting lambda function. Version: ' + version)
     # download the files from S3
     move_files('download', [rrd_file, csv_file])
     # get the current item count
