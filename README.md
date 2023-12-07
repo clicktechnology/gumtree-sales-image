@@ -55,11 +55,11 @@ ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
 REGISTRY="${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com"
 REPO="${LAMBDA_NAME}"
 TAG="${LAMBDA_VER}"
-CLOUDFRONT_DISTRIBUTION='E1G7KAIY31MA3K'
+CLOUDFRONT_DISTRIBUTION='E235IO7SVJ19TF'
 RRD_FILE='items.rrd'
 CSV_FILE='sales-count.csv'
 GUMTREE_URL='https://www.gumtree.com/search?featured_filter=false&q=&search_location=Broadstone%2C+Dorset&search_category=for-sale&distance=1&urgent_filter=false&sort=date&search_distance=1&search_scope=false&photos_filter=false'
-S3_BUCKET='cloudguyinbroadstone'
+S3_BUCKET='www.cloudguyinbroadstone.com'
 ```
 
 ## Log in to the ECR
@@ -96,8 +96,7 @@ docker run -p ${LAMBDA_LOCAL_PORT}:8080 ${REPO}:${TAG}
 Fire a request at the function to test it. In the first case, we're not passing any data to the function. In the second case, we're passing some data to the function which I used for testing and you may want to experiment. For the Gumtree project, there is no inbound data, so the first example is the one to use.
 
 ```bash
-curl "http://localhost:${LAMBDA_LOCAL_PORT}/2015-03-31/functions/function/invocations" -d '{}'
-curl "http://localhost:${LAMBDA_LOCAL_PORT}/2015-03-31/functions/function/invocations" -d '{"first_name": "John","last_name": "Smith","greeting": "Good afternoon"}'
+curl -d "int_temp=21&ext_temp=3&rh=72" -X POST http://172.17.0.3:8080/data
 ```
 
 ## Tag the image
@@ -149,7 +148,7 @@ To run the Lambda function, I created a policy called `AWSLambdaBasicExecutionPo
       "Effect": "Allow",
       "Action": ["cloudfront:CreateInvalidation"],
       "Resource": [
-        "arn:aws:cloudfront::123456789012:distribution/E1G7KAIY31MA3K"
+        "arn:aws:cloudfront::123456789012:distribution/E235IO7SVJ19TF"
       ]
     },
     {
