@@ -93,6 +93,8 @@ def handler(event, context):
                           '--width', '800',
                           '--height', '600',
                           '--full-size-mode',
+                          '--slope-mode',
+                          '--units-exponent', '0',  # Set Y axis units to base scale (no K, M, etc.)
                           '--watermark=cloudguyinbroadstone.com',
                           '--title', 'Gumtree items for sale in the last ' + period + ', 1 mile from Broadstone',
                           f"DEF:salecount=/tmp/{rrd_file}:sale-count:AVERAGE",
