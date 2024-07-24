@@ -111,10 +111,10 @@ def handler(event, context):
                 + period
                 + ", 1 mile from Broadstone",
                 f"DEF:salecount=/tmp/{rrd_file}:sale-count:AVERAGE",
-                f"LINE2:salecount#FF0000:Sale Count\\n",
-                f"GPRINT:salecount:MIN: Min%6.0lf\\n",
-                f"GPRINT:salecount:MAX: Max%6.0lf\\n",
-                f"GPRINT:salecount:AVERAGE: Average%6.0lf",
+                "LINE2:salecount#FF0000:Sale Count\\n",
+                "GPRINT:salecount:MIN: Min%6.0lf\\n",
+                "GPRINT:salecount:MAX: Max%6.0lf\\n",
+                "GPRINT:salecount:AVERAGE: Average%6.0lf",
             )
 
             print(f"Generated {period} graph: /tmp/{graph_file}")
@@ -160,7 +160,7 @@ def handler(event, context):
 
         elif refresh_distribution == "false":
             message = (
-                f"Skipping CloudFront cache invalidation. Repo variable REFRESH_DISTRIBUTION is set to "
+                "Skipping CloudFront cache invalidation. Repo variable REFRESH_DISTRIBUTION is set to "
                 + refresh_distribution
             )
 
