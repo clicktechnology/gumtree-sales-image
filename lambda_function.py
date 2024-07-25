@@ -29,15 +29,15 @@ def move_files(direction, file_array):
     s3 = boto3.client("s3")
     for file in file_array:
         if direction == "download":
-            print("Downloading file: " + file)
+            print("Downloading file: {}".format(file))
             s3.download_file(s3bucket, "data/" + file, "/tmp/" + file)
         elif direction == "upload":
             # if file is a graph, upload to images folder
             if file.endswith("_graph.png"):
-                print("Uploading graph file: " + file)
+                print("Uploading graph file: {}".format(file))
                 s3.upload_file("/tmp/" + file, s3bucket, "site/images/" + file)
             else:
-                print("Uploading data file: " + file)
+                print("Uploading data file: {}".format(file))
                 s3.upload_file("/tmp/" + file, s3bucket, "data/" + file)
 
 
@@ -82,13 +82,12 @@ def handler(event, context):
         # generate graphs for each time period
         for period, duration in periods.items():
             print(
-                "Generating graph for period: "
-                + period
-                + " ("
-                + str(duration)
-                + " seconds)"
+                "Generating graph for period: {} ({} seconds)".format(
+                    period, str(duration)
+                )
             )
-            graph_file = f"{period}_graph.png"
+
+            graph_file = "{}_graph.png".format(period)
 
             # generate the graph
             rrdtool.graph(
@@ -104,6 +103,7 @@ def handler(event, context):
                 "--full-size-mode",
                 "--slope-mode",
                 "--units-exponent",
+                "--imgformat PNG",
                 "0",  # Set Y axis units to base scale (no K, M, etc.)
                 "--watermark=cloudguyinbroadstone.com",
                 "--title",
@@ -117,7 +117,7 @@ def handler(event, context):
                 "GPRINT:salecount:AVERAGE: Average%6.0lf",
             )
 
-            print(f"Generated {period} graph: /tmp/{graph_file}")
+            print("Generated {} graph: /tmp/{}".format(period, graph_file))
 
         # upload the data files back to S3
         move_files(
