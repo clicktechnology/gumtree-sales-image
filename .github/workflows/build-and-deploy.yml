@@ -72,3 +72,4 @@ jobs:
             S3_BUCKET=${{ vars.S3_BUCKET }},
             REFRESH_DISTRIBUTION=${{ vars.REFRESH_DISTRIBUTION }},
             VERSION=${{ env.LAMBDA_VER }}
+            EXECUTION_ENV=AWS

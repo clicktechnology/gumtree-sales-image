@@ -4,6 +4,12 @@ import time
 import requests
 import rrdtool
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+
+
+# if running locally, load the .env file
+if os.environ.get("AWS_EXECUTION_ENV") is None:
+    load_dotenv()
 
 # get the function variable values from environment variables
 rrd_file = os.environ["RRD_FILE"]
@@ -103,8 +109,9 @@ def handler(event, context):
                 "--full-size-mode",
                 "--slope-mode",
                 "--units-exponent",
-                "--imgformat PNG",
                 "0",  # Set Y axis units to base scale (no K, M, etc.)
+                "--imgformat",
+                "PNG",
                 "--watermark=cloudguyinbroadstone.com",
                 "--title",
                 "Gumtree items for sale in the last "
@@ -134,7 +141,7 @@ def handler(event, context):
         )
 
         # invalidate CloudFront cache
-        if refresh_distribution == "true":
+        if refresh_distribution:
             print("Invalidating CloudFront cache")
             cloudfront = boto3.client("cloudfront")
             result = cloudfront.create_invalidation(
@@ -158,7 +165,7 @@ def handler(event, context):
                 f"Invalidated CloudFront cache. Invalidation ID: {invalidation_id}"
             )
 
-        elif refresh_distribution == "false":
+        else:
             message = (
                 "Skipping CloudFront cache invalidation. Repo variable REFRESH_DISTRIBUTION is set to "
                 + refresh_distribution
