@@ -3,11 +3,11 @@ FROM public.ecr.aws/lambda/python:3.11
 # Install additional packages if necessary
 RUN yum update -y && \
     yum install -y rrdtool \
-      gcc \
-      rrdtool-devel \
-      rrdtool-python \
-      librrd-devel \
-      python-devel && \
+    gcc \
+    rrdtool-devel \
+    rrdtool-python \
+    librrd-devel \
+    python-devel && \
     yum clean all && \
     rm -rf /var/cache/yum
 
