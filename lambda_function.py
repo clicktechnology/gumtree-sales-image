@@ -39,12 +39,28 @@ def move_files(direction, file_array):
             s3.download_file(s3bucket, "data/" + file, "/tmp/" + file)
         elif direction == "upload":
             # if file is a graph, upload to images folder
+            file_size = os.path.getsize("/tmp/" + file)
             if file.endswith("_graph.png"):
                 print("Uploading graph file: {}".format(file))
-                s3.upload_file("/tmp/" + file, s3bucket, "site/images/" + file)
+                # s3.upload_file("/tmp/" + file, s3bucket, "site/images/" + file)
+                response = s3.put_object(
+                    Body=open("/tmp/" + file, "rb"),
+                    Bucket=s3bucket,
+                    Key="site/images/" + file,
+                    ContentType="image/png",
+                    ContentLength=file_size,
+                )
             else:
                 print("Uploading data file: {}".format(file))
-                s3.upload_file("/tmp/" + file, s3bucket, "data/" + file)
+                # s3.upload_file("/tmp/" + file, s3bucket, "data/" + file)
+                response = s3.put_object(
+                    Body=open("/tmp/" + file, "rb"),
+                    Bucket=s3bucket,
+                    Key="data/" + file,
+                    ContentType="text/plain",
+                    ContentLength=file_size,
+                )
+            print(response)
 
 
 def get_item_count(uri):
