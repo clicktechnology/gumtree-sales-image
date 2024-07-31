@@ -158,7 +158,11 @@ def handler(event, context):
 
         # invalidate CloudFront cache
         if refresh_distribution:
-            print("Invalidating CloudFront cache")
+            print(
+                "Invalidating CloudFront cache because refresh_distribution = |{}|".format(
+                    refresh_distribution
+                )
+            )
             cloudfront = boto3.client("cloudfront")
             result = cloudfront.create_invalidation(
                 DistributionId=distribution,
@@ -182,9 +186,8 @@ def handler(event, context):
             )
 
         else:
-            message = (
-                "Skipping CloudFront cache invalidation. Repo variable REFRESH_DISTRIBUTION is set to "
-                + refresh_distribution
+            message = "Skipping CloudFront cache invalidation. Repo variable REFRESH_DISTRIBUTION = |{}|".format(
+                refresh_distribution
             )
 
         # log cache invalidation message
