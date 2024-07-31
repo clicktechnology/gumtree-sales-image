@@ -156,8 +156,8 @@ def handler(event, context):
             ],
         )
 
-        # invalidate CloudFront cache
-        if refresh_distribution:
+        # invalidate CloudFront cache if refresh_distribution is "true"
+        if refresh_distribution.lower() == "true":
             print(
                 "Invalidating CloudFront cache because refresh_distribution = |{}|".format(
                     refresh_distribution
@@ -185,7 +185,7 @@ def handler(event, context):
                 f"Invalidated CloudFront cache. Invalidation ID: {invalidation_id}"
             )
 
-        else:
+        elif refresh_distribution.lower() == "false":
             message = "Skipping CloudFront cache invalidation. Repo variable REFRESH_DISTRIBUTION = |{}|".format(
                 refresh_distribution
             )
